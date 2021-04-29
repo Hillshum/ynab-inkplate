@@ -51,9 +51,8 @@ void connectWifi()
     }
 } //======================== END WIFI CONNECT =======================
 
-#define NUM_CATEGORIES 2
 
-char categories[NUM_CATEGORIES][38] = {
+char categories[SECRET_NUM_CATEGORIES][38] = {
     SECRET_CATEGORY_FUN,
     SECRET_CATEGORY_MEALS
 };
