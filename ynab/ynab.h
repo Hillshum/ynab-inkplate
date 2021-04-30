@@ -42,53 +42,72 @@ bool getTime(char * result)
 
 }
 
-Category getCategory(const char * month, const char * categoryName)
+
+int extractCategory(Category &category, const char * providedId, const JsonArray &categories)
+{
+    for (JsonObject cat : categories)
+    {
+        const char * id = cat["id"];
+        if (strcmp(id, providedId))
+        {
+            continue;
+        }
+
+        category.balance = cat["balance"];
+        strcpy(category.name, cat["name"]);
+        return 1;
+    }
+    return 0;
+}
+
+int getBudgetInfo(Category results[], const char * month)
 {
     HTTPClient http;
+    http.useHTTP10(true);
 
-    char url[256];
+    char url[70];
 
-    sprintf(url, "https://api.youneedabudget.com/v1/budgets/last-used/months/%.10s/categories/%s", month, categoryName);
+    sprintf(url, "https://api.youneedabudget.com/v1/budgets/last-used/months/%.7s-01", month);
 
     Serial.println(url);
     http.begin(url);
 
+    Serial.println("began requet");
     char authHeader[80];
     sprintf(authHeader, "Bearer %s", SECRET_YNAB_KEY);
     http.addHeader("Authorization", authHeader);
-
-
+    Serial.println("added header");
 
     int httpCode = http.GET();
 
+    Serial.println("got response");
+    Serial.printf("budget request returned %d\n", httpCode);
     if (httpCode > 399)
     {
-        char returnval[3];
-        sprintf(returnval, "%d", httpCode);
-        return {};
+        return 0;
     }
 
-    StaticJsonDocument<768> response;
-
-    Serial.println("allocated response");
-    String resp = http.getString();
-    Serial.println(resp);
-    DeserializationError err = deserializeJson(response, resp);
+    DynamicJsonDocument response(49152);
+    DeserializationError err = deserializeJson(response, http.getStream());
     if (err)
     {
         Serial.print("err: ");
         Serial.println(err.c_str());
-        return {};
+        return 0;
+    }
+    Serial.println("decoded");
+    JsonObject data_month = response["data"]["month"];
+    
+
+    int found_categories = 0;
+    JsonArray categories = data_month["categories"].as<JsonArray>();
+
+    for (int i = 0; i < SECRET_NUM_CATEGORIES; i++)
+    {
+        found_categories += extractCategory(results[i], CATEGORY_IDS[i], categories);
     }
 
-    Serial.println("decoded");
+    return found_categories;
 
-    int balance = response["data"]["category"]["balance"];
-
-    Category category;
-    category.balance = balance;
-    strcpy(category.name, response["data"]["category"]["name"]);
-    category.success = true;
-    Serial.println("copied label");
-    return category;
 }
+

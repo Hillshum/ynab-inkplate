@@ -100,20 +100,17 @@ bool updateData()
     }
     Serial.printf("Month is %s\n", month);
 
-    Category category0 = getCategory(month, categories[0]);
-    if (!category0.success) {
-        return false;
-    }
-    
-
-    Category category1 = getCategory(month, categories[1]);
-    if (!category1.success) {
+    Category results[SECRET_NUM_CATEGORIES];
+    if (getBudgetInfo(results, month) == 0)
+    {
         return false;
     }
 
-    // text0_content = category0.name;
-    formatCurrency(text1_content, category0.balance);
-    formatCurrency(text3_content, category1.balance);
+
+    strcpy(text0_content, results[0].name);
+    formatCurrency(text1_content, results[0].balance);
+    strcpy(text2_content, results[1].name);
+    formatCurrency(text3_content, results[1].balance);
 
     return true;
 }

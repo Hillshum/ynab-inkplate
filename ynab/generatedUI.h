@@ -4,22 +4,22 @@
 
 extern Inkplate display;
 
-char text0_content[32] = "Fun Money";
+char text0_content[32] = "";
 int text0_cursor_x = 101;
 int text0_cursor_y = 93;
 const GFXfont *text0_font = &FreeSansBold24pt7b;
 
-char text1_content[32] = "--";
+char text1_content[32] = "";
 int text1_cursor_x = 480;
 int text1_cursor_y = 168;
 const GFXfont *text1_font = &FreeSansBold24pt7b;
 
-char text2_content[32] = "Planned Quick Meals";
+char text2_content[32] = "";
 int text2_cursor_x = 29;
 int text2_cursor_y = 371;
 const GFXfont *text2_font = &FreeSansBold24pt7b;
 
-char text3_content[32] = "--";
+char text3_content[32] = "";
 int text3_cursor_x = 480;
 int text3_cursor_y = 492;
 const GFXfont *text3_font = &FreeSansBold24pt7b;
