@@ -23,6 +23,8 @@ int delayMillis = DELAY_SECS * 1000;
 
 int num = 0;
 
+char month[64] ="";
+
 
 void connectWifi()
 {
@@ -88,26 +90,52 @@ void formatCurrency(char * output, int currency)
     sprintf(output, "$%.2f", divided);
 }
 
+int loopsSinceLastUpdate = 0;
+
+
+bool updateData()
+{
+    if (!getTime(month)) {
+        return false;
+    }
+    Serial.printf("Month is %s\n", month);
+
+    Category category0 = getCategory(month, categories[0]);
+    if (!category0.success) {
+        return false;
+    }
+    
+
+    Category category1 = getCategory(month, categories[1]);
+    if (!category1.success) {
+        return false;
+    }
+
+    // text0_content = category0.name;
+    formatCurrency(text1_content, category0.balance);
+    formatCurrency(text3_content, category1.balance);
+
+    return true;
+}
+
 void loop()
 {
 
+    loopsSinceLastUpdate++;
     display.clearDisplay();
 
     display.setCursor(150, 320);
 
     display.setTextSize(4);
     connectWifi();
-    char month[64] ="2021-04-01";
-    // getTime(month);
-    Serial.println(month);
 
-    Category category0 = getCategory(month, categories[0]);
-    // text0_content = category0.name;
-    formatCurrency(text1_content, category0.balance);
-    
+    if (updateData())
+    {
+        loopsSinceLastUpdate = 0;
+    }
+    int timeSinceLastUpdate = loopsSinceLastUpdate * delayMillis / 1000;
 
-    Category category1 = getCategory(month, categories[1]);
-    formatCurrency(text3_content, category1.balance);
+    sprintf(time_content, "Last updated %d seconds ago", timeSinceLastUpdate);
 
     mainDraw();
 

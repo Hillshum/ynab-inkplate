@@ -10,6 +10,7 @@
 struct Category {
     int balance;
     char name[CATEGORY_NAME_LEN];
+    bool success = false;
 };
 
 bool getTime(char * result)
@@ -59,7 +60,6 @@ Category getCategory(const char * month, const char * categoryName)
 
 
     int httpCode = http.GET();
-    Serial.println("got request");
 
     if (httpCode > 399)
     {
@@ -71,7 +71,9 @@ Category getCategory(const char * month, const char * categoryName)
     StaticJsonDocument<768> response;
 
     Serial.println("allocated response");
-    DeserializationError err = deserializeJson(response, http.getString());
+    String resp = http.getString();
+    Serial.println(resp);
+    DeserializationError err = deserializeJson(response, resp);
     if (err)
     {
         Serial.print("err: ");
@@ -86,6 +88,7 @@ Category getCategory(const char * month, const char * categoryName)
     Category category;
     category.balance = balance;
     strcpy(category.name, response["data"]["category"]["name"]);
+    category.success = true;
     Serial.println("copied label");
     return category;
 }
