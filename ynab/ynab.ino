@@ -87,7 +87,9 @@ void setup()
 void formatCurrency(char * output, int currency)
 {
     float divided = currency / 1000.0;
-    sprintf(output, "$%.2f", divided);
+    char value[10];
+    sprintf(value, "$%.2f", divided);
+    sprintf(output, "%s", value);
 }
 
 int loopsSinceLastUpdate = 0;
@@ -130,9 +132,9 @@ void loop()
     {
         loopsSinceLastUpdate = 0;
     }
-    int timeSinceLastUpdate = loopsSinceLastUpdate * delayMillis / 1000;
+    float timeSinceLastUpdate = loopsSinceLastUpdate * delayMillis / 1000 / 60.0;
 
-    sprintf(time_content, "Last updated %d seconds ago", timeSinceLastUpdate);
+    sprintf(time_content, "Last updated at %.5s (%.2f min ago)", month + 11, timeSinceLastUpdate);
 
     mainDraw();
 
