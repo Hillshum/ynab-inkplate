@@ -99,10 +99,6 @@ int loopsSinceLastUpdate = 0;
 
 bool updateData()
 {
-    // if (!getTime(month)) {
-    //     return false;
-    // }
-    Serial.printf("Month is %s\n", month);
 
     Category results[SECRET_NUM_CATEGORIES];
     if (getBudgetInfo(results) == 0)
@@ -138,7 +134,7 @@ void loop()
 
     char time_buf[16];
 
-    getTime(time_buf, sizeof(time_buf), "%H:%M");
+    formatTime(time_buf, sizeof(time_buf), "%H:%M");
 
     sprintf(time_content, "Last updated at %.5s (%.2f min ago)", time_buf, timeSinceLastUpdate);
 

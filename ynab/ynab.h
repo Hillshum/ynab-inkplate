@@ -36,11 +36,31 @@ bool getTime()
         return false;
     }
 
-    const char* datetime = response["datetime"];
     time_t unixTime = response["unixtime"];
     timeval time {unixTime, 0};
     settimeofday(&time, nullptr);
-    // strcpy(result, datetime);
+
+
+    // response["timezone"];
+    char utc_offset_sign = *response["utc_offset"].as<char*>();
+
+    char unix_offset_sign = '+';
+    if (utc_offset_sign == '+')
+    {
+        unix_offset_sign = '-';
+    }
+
+
+    char offset[4];
+    sprintf(offset, "%.2s", response["utc_offset"].as<char*>() + 1 );
+    int off = atoi(offset);
+    char timezone[32];
+    sprintf(timezone, "%s%c%d", response["abbreviation"].as<char*>(), unix_offset_sign, off);
+    Serial.println(timezone);
+    setenv("TZ", timezone, 1);
+    tzset();
+
+
     return true;
 
 }
@@ -63,16 +83,14 @@ int extractCategory(Category &category, const char * providedId, const JsonArray
     return 0;
 }
 
-void getTime(char * result, int result_len, char * strfmt)
+void formatTime(char * result, int result_len, char * strfmt)
 {
 
     time_t now;
     struct tm timeinfo;
 
-    time(&now);
-    setenv("TZ", "CDT+5", 1);
-    tzset();
 
+    time(&now);
     localtime_r(&now, &timeinfo);
     strftime(result, result_len, strfmt, &timeinfo);
     Serial.printf("Time is %s\n", result);
@@ -90,8 +108,8 @@ int getBudgetInfo(Category results[])
     char url[70];
 
     char strftime_buf[64];
-    getTime(strftime_buf, sizeof(strftime_buf), "%Y-%m-%d");
-    sprintf(url, "https://api.youneedabudget.com/v1/budgets/last-used/months/%.7s-01", strftime_buf);
+    formatTime(strftime_buf, sizeof(strftime_buf), "%Y-%m");
+    sprintf(url, "https://api.youneedabudget.com/v1/budgets/last-used/months/%s-01", strftime_buf);
 
     Serial.println(url);
     http.begin(url);
