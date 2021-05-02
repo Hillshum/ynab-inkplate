@@ -80,6 +80,8 @@ void setup()
     display.setFont(text_font);
     display.print("Welcome to YNAB");
     display.display();
+    connectWifi();
+    getTime();
     delay(5000);
 }
 
@@ -97,13 +99,13 @@ int loopsSinceLastUpdate = 0;
 
 bool updateData()
 {
-    if (!getTime(month)) {
-        return false;
-    }
+    // if (!getTime(month)) {
+    //     return false;
+    // }
     Serial.printf("Month is %s\n", month);
 
     Category results[SECRET_NUM_CATEGORIES];
-    if (getBudgetInfo(results, month) == 0)
+    if (getBudgetInfo(results) == 0)
     {
         return false;
     }
@@ -134,7 +136,11 @@ void loop()
     }
     float timeSinceLastUpdate = loopsSinceLastUpdate * delayMillis / 1000 / 60.0;
 
-    sprintf(time_content, "Last updated at %.5s (%.2f min ago)", month + 11, timeSinceLastUpdate);
+    char time_buf[16];
+
+    getTime(time_buf, sizeof(time_buf), "%H:%M");
+
+    sprintf(time_content, "Last updated at %.5s (%.2f min ago)", time_buf, timeSinceLastUpdate);
 
     mainDraw();
 

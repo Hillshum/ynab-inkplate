@@ -13,7 +13,7 @@ struct Category {
     bool success = false;
 };
 
-bool getTime(char * result)
+bool getTime()
 {
 
     HTTPClient http;
@@ -37,7 +37,10 @@ bool getTime(char * result)
     }
 
     const char* datetime = response["datetime"];
-    strcpy(result, datetime);
+    time_t unixTime = response["unixtime"];
+    timeval time {unixTime, 0};
+    settimeofday(&time, nullptr);
+    // strcpy(result, datetime);
     return true;
 
 }
@@ -60,14 +63,35 @@ int extractCategory(Category &category, const char * providedId, const JsonArray
     return 0;
 }
 
-int getBudgetInfo(Category results[], const char * month)
+void getTime(char * result, int result_len, char * strfmt)
 {
+
+    time_t now;
+    struct tm timeinfo;
+
+    time(&now);
+    setenv("TZ", "CDT+5", 1);
+    tzset();
+
+    localtime_r(&now, &timeinfo);
+    strftime(result, result_len, strfmt, &timeinfo);
+    Serial.printf("Time is %s\n", result);
+
+}
+
+int getBudgetInfo(Category results[])
+{
+
+
+
     HTTPClient http;
     http.useHTTP10(true);
 
     char url[70];
 
-    sprintf(url, "https://api.youneedabudget.com/v1/budgets/last-used/months/%.7s-01", month);
+    char strftime_buf[64];
+    getTime(strftime_buf, sizeof(strftime_buf), "%Y-%m-%d");
+    sprintf(url, "https://api.youneedabudget.com/v1/budgets/last-used/months/%.7s-01", strftime_buf);
 
     Serial.println(url);
     http.begin(url);
