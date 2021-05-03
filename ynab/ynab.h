@@ -13,9 +13,11 @@ struct Category {
     bool success = false;
 };
 
-bool getTime()
-{
 
+char tzString[8] = "CDT+5";
+
+bool getTZString(char * tzString)
+{
     HTTPClient http;
     http.begin("http://worldtimeapi.org/api/ip");
     int httpCode = http.GET();
@@ -36,32 +38,32 @@ bool getTime()
         return false;
     }
 
-    time_t unixTime = response["unixtime"];
-    timeval time {unixTime, 0};
-    settimeofday(&time, nullptr);
-
-
-    // response["timezone"];
     char utc_offset_sign = *response["utc_offset"].as<char*>();
-
     char unix_offset_sign = '+';
     if (utc_offset_sign == '+')
     {
         unix_offset_sign = '-';
     }
 
-
     char offset[4];
     sprintf(offset, "%.2s", response["utc_offset"].as<char*>() + 1 );
     int off = atoi(offset);
-    char timezone[32];
-    sprintf(timezone, "%s%c%d", response["abbreviation"].as<char*>(), unix_offset_sign, off);
-    Serial.println(timezone);
-    setenv("TZ", timezone, 1);
-    tzset();
+    sprintf(tzString, "%s%c%d", response["abbreviation"].as<char*>(), unix_offset_sign, off);
+    Serial.println(tzString);
 
 
-    return true;
+}
+
+
+bool initializeTime(bool updateTZ = false)
+{
+    if (updateTZ)
+    {
+        char tzString[8] = "CDT+5";
+        getTZString(tzString);
+    }
+
+    configTzTime(tzString, "0.pool.ntp.org", "1.pool.ntp.org");
 
 }
 

@@ -7,6 +7,7 @@
 
 
 #include <WiFi.h>
+#include "time.h"
 
 #include "Inkplate.h"
 Inkplate display(INKPLATE_3BIT);
@@ -81,7 +82,7 @@ void setup()
     display.print("Welcome to YNAB");
     display.display();
     connectWifi();
-    getTime();
+    initializeTime(true);
     delay(5000);
 }
 
@@ -115,16 +116,18 @@ bool updateData()
     return true;
 }
 
+int timeUpdateCounter = 0;
 void loop()
 {
 
     loopsSinceLastUpdate++;
-    display.clearDisplay();
-
-    display.setCursor(150, 320);
-
-    display.setTextSize(4);
     connectWifi();
+
+    if (timeUpdateCounter++ == 30)
+    {
+        initializeTime(false);
+        timeUpdateCounter = 0;
+    }
 
     if (updateData())
     {
@@ -137,6 +140,12 @@ void loop()
     formatTime(time_buf, sizeof(time_buf), "%H:%M");
 
     sprintf(time_content, "Last updated at %.5s (%.2f min ago)", time_buf, timeSinceLastUpdate);
+
+    display.clearDisplay();
+
+    display.setCursor(150, 320);
+
+    display.setTextSize(4);
 
     mainDraw();
 
