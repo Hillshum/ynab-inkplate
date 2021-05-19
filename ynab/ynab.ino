@@ -139,8 +139,10 @@ void loop()
 
     formatTime(time_buf, sizeof(time_buf), "%H:%M");
 
-    sprintf(time_content, "Last updated at %.5s (%.2f min ago)", time_buf, timeSinceLastUpdate);
+    double voltage = display.readBattery();
+    sprintf(time_content, "Last updated at %.5s (%.2f min ago)       %.2fv", time_buf, timeSinceLastUpdate, voltage);
 
+    Serial.printf("battery at: %f\n", voltage);
     display.clearDisplay();
 
     display.setCursor(150, 320);
