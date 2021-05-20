@@ -10,7 +10,9 @@
 #include "time.h"
 
 #include "Inkplate.h"
+#include "driver/rtc_io.h"
 Inkplate display(INKPLATE_3BIT);
+#define uS_TO_S_FACTOR 1000000 // Conversion factor for micro seconds to seconds
 
 #include "ynab.h"
 #include "generatedUI.h"
@@ -60,6 +62,11 @@ char categories[SECRET_NUM_CATEGORIES][38] = {
     SECRET_CATEGORY_MEALS
 };
 
+int loopsSinceLastUpdate = 0;
+
+RTC_DATA_ATTR int timeUpdateCounter = 30;
+RTC_DATA_ATTR bool isFirstBoot = true;
+
 void setup()
 {
 
@@ -73,61 +80,28 @@ void setup()
 
     display.begin();
     display.clearDisplay();
-    display.display();
+    // display.display();
 
-    display.setCursor(150, 320);
+    // display.setCursor(150, 320);
 
-    display.setTextSize(4);
-    display.setFont(text_font);
-    display.print("Welcome to YNAB");
-    display.display();
+    // display.setTextSize(4);
+    // display.setFont(text_font);
+    // display.print("Welcome to YNAB");
+    // display.display();
     connectWifi();
-    initializeTime(true);
-    delay(5000);
-}
-
-
-void formatCurrency(char * output, int currency)
-{
-    float divided = currency / 1000.0;
-    char value[10];
-    sprintf(value, "$%.2f", divided);
-    sprintf(output, "%s", value);
-}
-
-int loopsSinceLastUpdate = 0;
-
-
-bool updateData()
-{
-
-    Category results[SECRET_NUM_CATEGORIES];
-    if (getBudgetInfo(results) == 0)
-    {
-        return false;
-    }
-
-
-    strcpy(text0_content, results[0].name);
-    formatCurrency(text1_content, results[0].balance);
-    strcpy(text2_content, results[1].name);
-    formatCurrency(text3_content, results[1].balance);
-
-    return true;
-}
-
-int timeUpdateCounter = 0;
-void loop()
-{
 
     loopsSinceLastUpdate++;
-    connectWifi();
 
+    Serial.printf("Timeupdate %d\n", timeUpdateCounter);
+    bool callNtp = false;
     if (timeUpdateCounter++ == 30)
     {
-        initializeTime(false);
+        callNtp = true;
+
         timeUpdateCounter = 0;
     }
+    initializeTime(isFirstBoot, callNtp);
+
 
     if (updateData())
     {
@@ -152,5 +126,45 @@ void loop()
     mainDraw();
 
     display.display();
-    delay(delayMillis);
+    
+    isFirstBoot = false;
+    rtc_gpio_isolate(GPIO_NUM_12);
+    esp_sleep_enable_timer_wakeup(20 * uS_TO_S_FACTOR);
+    esp_deep_sleep_start();
+}
+    
+
+
+
+
+void formatCurrency(char * output, int currency)
+{
+    float divided = currency / 1000.0;
+    char value[10];
+    sprintf(value, "$%.2f", divided);
+    sprintf(output, "%s", value);
+}
+
+
+bool updateData()
+{
+
+    Category results[SECRET_NUM_CATEGORIES];
+    if (getBudgetInfo(results) == 0)
+    {
+        return false;
+    }
+
+
+    strcpy(text0_content, results[0].name);
+    formatCurrency(text1_content, results[0].balance);
+    strcpy(text2_content, results[1].name);
+    formatCurrency(text3_content, results[1].balance);
+
+    return true;
+}
+
+void loop()
+{
+
 }

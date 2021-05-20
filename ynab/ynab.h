@@ -14,7 +14,7 @@ struct Category {
 };
 
 
-char tzString[8] = "CDT+5";
+RTC_DATA_ATTR char tzString[8] = "CDT+10";
 
 bool getTZString(char * tzString)
 {
@@ -55,15 +55,23 @@ bool getTZString(char * tzString)
 }
 
 
-bool initializeTime(bool updateTZ = false)
+bool initializeTime(bool isFirstBoot = false, bool pingNtp = false)
 {
-    if (updateTZ)
+    if (isFirstBoot)
     {
-        char tzString[8] = "CDT+5";
+        // char tzString[8] = "CDT+5";
         getTZString(tzString);
     }
 
+    Serial.printf("Using tzString %s\n", tzString);
+    setenv("TZ", tzString, 1);
+    tzset();
+
+    if (pingNtp)
+    {
     configTzTime(tzString, "0.pool.ntp.org", "1.pool.ntp.org");
+    delay(5000);
+    }
 
 }
 
