@@ -19,7 +19,7 @@ Inkplate display(INKPLATE_1BIT);
 #include "arduino_secrets.h"
 
 const GFXfont *text_font = &FreeSansBold24pt7b;
-#define DELAY_SECS 60
+#define DELAY_SECS 300
 
 int delayMillis = DELAY_SECS * 1000;
 
