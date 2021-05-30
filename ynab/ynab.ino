@@ -149,14 +149,14 @@ void formatCurrency(char * output, int currency)
 
 bool updateData()
 {
-    getBudgetInfo(results);
+    bool success = getBudgetInfo(results);
 
     strcpy(text0_content, results[0].name);
     formatCurrency(text1_content, results[0].balance);
     strcpy(text2_content, results[1].name);
     formatCurrency(text3_content, results[1].balance);
 
-    return true;
+    return success;
 }
 
 void loop()
