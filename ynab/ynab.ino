@@ -130,7 +130,7 @@ void setup()
     
     isFirstBoot = false;
     rtc_gpio_isolate(GPIO_NUM_12);
-    esp_sleep_enable_timer_wakeup(20 * uS_TO_S_FACTOR);
+    esp_sleep_enable_timer_wakeup(DELAY_SECS * uS_TO_S_FACTOR);
     esp_deep_sleep_start();
 }
     
