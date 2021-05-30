@@ -66,6 +66,7 @@ int loopsSinceLastUpdate = 0;
 
 RTC_DATA_ATTR int timeUpdateCounter = 30;
 RTC_DATA_ATTR bool isFirstBoot = true;
+RTC_DATA_ATTR Category results[SECRET_NUM_CATEGORIES];
 
 void setup()
 {
@@ -148,13 +149,7 @@ void formatCurrency(char * output, int currency)
 
 bool updateData()
 {
-
-    Category results[SECRET_NUM_CATEGORIES];
-    if (getBudgetInfo(results) == 0)
-    {
-        return false;
-    }
-
+    getBudgetInfo(results);
 
     strcpy(text0_content, results[0].name);
     formatCurrency(text1_content, results[0].balance);

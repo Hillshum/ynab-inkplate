@@ -14,7 +14,7 @@ struct Category {
 };
 
 
-RTC_DATA_ATTR char tzString[8] = "CDT+10";
+RTC_DATA_ATTR char tzString[8] = "CDT+5";
 
 bool getTZString(char * tzString)
 {
@@ -60,7 +60,7 @@ bool initializeTime(bool isFirstBoot = false, bool pingNtp = false)
     if (isFirstBoot)
     {
         // char tzString[8] = "CDT+5";
-        getTZString(tzString);
+        // getTZString(tzString);
     }
 
     Serial.printf("Using tzString %s\n", tzString);
