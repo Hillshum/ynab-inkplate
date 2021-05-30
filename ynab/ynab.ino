@@ -11,7 +11,7 @@
 
 #include "Inkplate.h"
 #include "driver/rtc_io.h"
-Inkplate display(INKPLATE_3BIT);
+Inkplate display(INKPLATE_1BIT);
 #define uS_TO_S_FACTOR 1000000 // Conversion factor for micro seconds to seconds
 
 #include "ynab.h"
