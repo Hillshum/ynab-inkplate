@@ -2,6 +2,10 @@
 #include "Fonts/FreeSansBold24pt7b.h"
 #include "Fonts/FreeSansBold12pt7b.h"
 
+#define PROGRESS_WIDTH 337
+#define PROGRESS_HEIGHT 20
+#define PROGRESS_COLOR 6
+
 extern Inkplate display;
 
 char text0_content[32] = "";
@@ -13,6 +17,9 @@ char text1_content[32] = "";
 int text1_cursor_x = 420;
 int text1_cursor_y = 168;
 const GFXfont *text1_font = &FreeSansBold24pt7b;
+
+int category1_bar_x = 420;
+int category1_bar_y = 200;
 
 char text2_content[32] = "";
 int text2_cursor_x = 29;
@@ -29,6 +36,17 @@ int time_cursor_x = 110;
 int time_cursor_y = 550;
 const GFXfont *time_font = &FreeSansBold12pt7b;
 
+
+void drawBar(int16_t x, int16_t y, float progress)
+{
+    int16_t solid_width = PROGRESS_WIDTH * progress;
+    display.fillRect(x, y, solid_width, PROGRESS_HEIGHT, PROGRESS_COLOR);
+
+    int16_t hollow_start = x + solid_width;
+    int16_t hollow_width = PROGRESS_WIDTH - solid_width;
+    display.drawRect(hollow_start, y, hollow_width, PROGRESS_HEIGHT, PROGRESS_COLOR);
+
+}
 
 void mainDraw() {
     display.setFont(text0_font);
@@ -50,6 +68,9 @@ void mainDraw() {
     display.setFont(time_font);
     display.setTextSize(1);    display.setCursor(time_cursor_x, time_cursor_y);
     display.print(time_content);
+
+    // display.fillRect(category1_bar_x, category1_bar_y, PROGRESS_WIDTH, 20, 6);
+    drawBar(category1_bar_x, category1_bar_y, 0.25f);
 
 
 }
