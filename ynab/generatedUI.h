@@ -9,7 +9,7 @@
 extern Inkplate display;
 
 char text0_content[32] = "";
-int text0_cursor_x = 101;
+int text0_cursor_x = 60;
 int text0_cursor_y = 93;
 const GFXfont *text0_font = &FreeSansBold24pt7b;
 
@@ -22,7 +22,7 @@ int category1_bar_x = 420;
 int category1_bar_y = 225;
 
 char text2_content[32] = "";
-int text2_cursor_x = 29;
+int text2_cursor_x = 60;
 int text2_cursor_y = 341;
 const GFXfont *text2_font = &FreeSansBold24pt7b;
 
@@ -35,7 +35,7 @@ int category2_bar_x = 420;
 int category2_bar_y = 473;
 
 char time_content[64] = "";
-int time_cursor_x = 110;
+int time_cursor_x = 60;
 int time_cursor_y = 550;
 const GFXfont *time_font = &FreeSansBold12pt7b;
 
