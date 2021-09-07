@@ -2,7 +2,7 @@
 #include "Fonts/FreeSansBold24pt7b.h"
 #include "Fonts/FreeSansBold12pt7b.h"
 
-#define PROGRESS_WIDTH 337
+#define PROGRESS_WIDTH 670
 #define PROGRESS_HEIGHT 20
 #define PROGRESS_COLOR 6
 
@@ -14,29 +14,27 @@ int text0_cursor_y = 93;
 const GFXfont *text0_font = &FreeSansBold24pt7b;
 
 char text1_content[32] = "";
-int text1_cursor_x = 420;
+int text1_cursor_x = 410;
 int text1_cursor_y = 193;
 const GFXfont *text1_font = &FreeSansBold24pt7b;
 
-int category1_bar_x = 420;
-int category1_bar_y = 225;
+int category_bar_x = 60;
+int category_bar_y = 500;
 
 char text2_content[32] = "";
 int text2_cursor_x = 60;
-int text2_cursor_y = 341;
+int text2_cursor_y = 301;
 const GFXfont *text2_font = &FreeSansBold24pt7b;
 
 char text3_content[32] = "";
-int text3_cursor_x = 420;
-int text3_cursor_y = 441;
+int text3_cursor_x = 410;
+int text3_cursor_y = 401;
 const GFXfont *text3_font = &FreeSansBold24pt7b;
 
-int category2_bar_x = 420;
-int category2_bar_y = 473;
 
 char time_content[64] = "";
 int time_cursor_x = 60;
-int time_cursor_y = 550;
+int time_cursor_y = 570;
 const GFXfont *time_font = &FreeSansBold12pt7b;
 
 
@@ -75,9 +73,7 @@ void mainDraw() {
     display.setTextSize(1);    display.setCursor(time_cursor_x, time_cursor_y);
     display.print(time_content);
 
-    // display.fillRect(category1_bar_x, category1_bar_y, PROGRESS_WIDTH, 20, 6);
-    drawBar(category1_bar_x, category1_bar_y, month_progress);
-    drawBar(category2_bar_x, category2_bar_y, month_progress);
+    drawBar(category_bar_x, category_bar_y, month_progress);
 
 
 }
