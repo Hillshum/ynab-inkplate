@@ -146,11 +146,40 @@ void formatCurrency(char * output, int currency)
     sprintf(output, "%s", value);
 }
 
+float getMonthProgress()
+{
+    char day_buf[4];
+    formatTime(day_buf, sizeof(day_buf), "%d");
+    int day = atoi(day_buf);
+
+    char month_buf[4];
+    formatTime(month_buf, sizeof(day_buf), "%m");
+    int month = atoi(month_buf);
+
+    float month_length;
+    switch (month) {
+        case 2: // Feb
+            month_length = 28.0f;  //TODO: Deal with leap years
+            break;
+        case 9:
+        case 4:
+        case 6:
+        case 11:
+            month_length = 30.0f;
+            break;
+        default:
+            month_length = 31.0f;
+    }
+
+    return day / month_length;
+
+}
 
 bool updateData()
 {
     bool success = getBudgetInfo(results);
 
+    month_progress = getMonthProgress();
     strcpy(text0_content, results[0].name);
     formatCurrency(text1_content, results[0].balance);
     strcpy(text2_content, results[1].name);

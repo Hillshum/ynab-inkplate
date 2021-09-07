@@ -15,26 +15,32 @@ const GFXfont *text0_font = &FreeSansBold24pt7b;
 
 char text1_content[32] = "";
 int text1_cursor_x = 420;
-int text1_cursor_y = 168;
+int text1_cursor_y = 193;
 const GFXfont *text1_font = &FreeSansBold24pt7b;
 
 int category1_bar_x = 420;
-int category1_bar_y = 200;
+int category1_bar_y = 225;
 
 char text2_content[32] = "";
 int text2_cursor_x = 29;
-int text2_cursor_y = 371;
+int text2_cursor_y = 341;
 const GFXfont *text2_font = &FreeSansBold24pt7b;
 
 char text3_content[32] = "";
 int text3_cursor_x = 420;
-int text3_cursor_y = 492;
+int text3_cursor_y = 441;
 const GFXfont *text3_font = &FreeSansBold24pt7b;
+
+int category2_bar_x = 420;
+int category2_bar_y = 473;
 
 char time_content[64] = "";
 int time_cursor_x = 110;
 int time_cursor_y = 550;
 const GFXfont *time_font = &FreeSansBold12pt7b;
+
+
+float month_progress;
 
 
 void drawBar(int16_t x, int16_t y, float progress)
@@ -70,7 +76,8 @@ void mainDraw() {
     display.print(time_content);
 
     // display.fillRect(category1_bar_x, category1_bar_y, PROGRESS_WIDTH, 20, 6);
-    drawBar(category1_bar_x, category1_bar_y, 0.25f);
+    drawBar(category1_bar_x, category1_bar_y, month_progress);
+    drawBar(category2_bar_x, category2_bar_y, month_progress);
 
 
 }
